@@ -2,9 +2,7 @@ from logging.config import fileConfig
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
-import asyncio
-import sys
-import os
+import asyncio, sys, os
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -12,6 +10,12 @@ from app.core.database import Base
 from app.models import *  # noqa
 
 config = context.config
+
+# 從環境變數覆蓋 DATABASE_URL
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    config.set_main_option("sqlalchemy.url", database_url)
+
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
